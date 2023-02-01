@@ -3,11 +3,27 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".dockerignore">
+      <DependentUpon>Dockerfile</DependentUpon>
+    </Content>
+  </ItemGroup>
+  
+  <Target Name="DeployLocalDockerContainer" AfterTargets="Build">
+    <PropertyGroup>
+      <AutoDeployLocalDockerContainer>false</AutoDeployLocalDockerContainer>
+    </PropertyGroup>
+    <Exec 
+      Command="./docker-build.sh" 
+      Condition="[MSBuild]::IsOSUnixLike() And '$(Configuration)'=='Debug' And '$(AutoDeployLocalDockerContainer)'=='true'" 
+    />
+  </Target>
 
 </Project>
